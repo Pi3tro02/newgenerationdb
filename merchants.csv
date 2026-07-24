@@ -1,0 +1,501 @@
+merchant_id,merchant_name,category,country,risk_level
+1,Merchant_1,travel,France,low
+2,Merchant_2,luxury,Italy,high
+3,Merchant_3,restaurant,Belgium,high
+4,Merchant_4,fuel,Spain,high
+5,Merchant_5,electronics,United Kingdom,low
+6,Merchant_6,luxury,Poland,high
+7,Merchant_7,crypto,United Kingdom,low
+8,Merchant_8,crypto,France,high
+9,Merchant_9,grocery,United Kingdom,low
+10,Merchant_10,travel,United Kingdom,medium
+11,Merchant_11,restaurant,Belgium,low
+12,Merchant_12,electronics,Austria,low
+13,Merchant_13,fashion,France,low
+14,Merchant_14,travel,United Kingdom,low
+15,Merchant_15,restaurant,Austria,low
+16,Merchant_16,travel,Spain,low
+17,Merchant_17,gambling,Belgium,medium
+18,Merchant_18,crypto,Netherlands,high
+19,Merchant_19,electronics,France,high
+20,Merchant_20,gambling,Romania,high
+21,Merchant_21,electronics,Netherlands,low
+22,Merchant_22,fashion,United Kingdom,medium
+23,Merchant_23,digital_services,Belgium,medium
+24,Merchant_24,electronics,France,high
+25,Merchant_25,travel,Italy,medium
+26,Merchant_26,grocery,Belgium,low
+27,Merchant_27,digital_services,Netherlands,medium
+28,Merchant_28,grocery,Italy,high
+29,Merchant_29,travel,Poland,low
+30,Merchant_30,grocery,Netherlands,low
+31,Merchant_31,travel,Poland,medium
+32,Merchant_32,electronics,Spain,low
+33,Merchant_33,luxury,Germany,high
+34,Merchant_34,luxury,Poland,low
+35,Merchant_35,fuel,United Kingdom,medium
+36,Merchant_36,restaurant,Austria,medium
+37,Merchant_37,travel,Poland,medium
+38,Merchant_38,restaurant,Netherlands,low
+39,Merchant_39,travel,United Kingdom,high
+40,Merchant_40,travel,France,low
+41,Merchant_41,restaurant,Netherlands,low
+42,Merchant_42,fashion,France,medium
+43,Merchant_43,gambling,Poland,high
+44,Merchant_44,gambling,Poland,high
+45,Merchant_45,digital_services,France,low
+46,Merchant_46,electronics,Italy,low
+47,Merchant_47,luxury,France,high
+48,Merchant_48,digital_services,Belgium,medium
+49,Merchant_49,fuel,Austria,low
+50,Merchant_50,travel,Netherlands,low
+51,Merchant_51,gambling,Austria,medium
+52,Merchant_52,gambling,Romania,high
+53,Merchant_53,crypto,Austria,high
+54,Merchant_54,travel,Spain,medium
+55,Merchant_55,restaurant,Poland,low
+56,Merchant_56,restaurant,Poland,low
+57,Merchant_57,fuel,United Kingdom,low
+58,Merchant_58,digital_services,Spain,low
+59,Merchant_59,digital_services,Poland,medium
+60,Merchant_60,crypto,Poland,high
+61,Merchant_61,grocery,Poland,low
+62,Merchant_62,grocery,Germany,low
+63,Merchant_63,restaurant,Austria,low
+64,Merchant_64,travel,Netherlands,medium
+65,Merchant_65,gambling,Romania,low
+66,Merchant_66,luxury,Italy,high
+67,Merchant_67,grocery,Romania,low
+68,Merchant_68,restaurant,Italy,low
+69,Merchant_69,crypto,Netherlands,high
+70,Merchant_70,crypto,Belgium,high
+71,Merchant_71,digital_services,United Kingdom,low
+72,Merchant_72,fuel,Romania,low
+73,Merchant_73,crypto,Netherlands,medium
+74,Merchant_74,digital_services,Poland,low
+75,Merchant_75,luxury,Spain,high
+76,Merchant_76,travel,United Kingdom,low
+77,Merchant_77,travel,Romania,low
+78,Merchant_78,crypto,Italy,medium
+79,Merchant_79,electronics,Belgium,low
+80,Merchant_80,restaurant,Netherlands,low
+81,Merchant_81,gambling,Austria,medium
+82,Merchant_82,gambling,United Kingdom,medium
+83,Merchant_83,travel,Austria,low
+84,Merchant_84,luxury,Romania,medium
+85,Merchant_85,fuel,Germany,low
+86,Merchant_86,travel,Poland,low
+87,Merchant_87,gambling,France,low
+88,Merchant_88,travel,Austria,low
+89,Merchant_89,luxury,Belgium,high
+90,Merchant_90,grocery,Belgium,low
+91,Merchant_91,gambling,Poland,high
+92,Merchant_92,electronics,United Kingdom,low
+93,Merchant_93,travel,Austria,low
+94,Merchant_94,crypto,Netherlands,low
+95,Merchant_95,restaurant,Italy,low
+96,Merchant_96,electronics,Germany,high
+97,Merchant_97,fashion,France,low
+98,Merchant_98,grocery,Netherlands,low
+99,Merchant_99,gambling,Romania,medium
+100,Merchant_100,crypto,Poland,medium
+101,Merchant_101,digital_services,United Kingdom,low
+102,Merchant_102,crypto,United Kingdom,high
+103,Merchant_103,electronics,Spain,low
+104,Merchant_104,digital_services,Spain,medium
+105,Merchant_105,fashion,Spain,low
+106,Merchant_106,fashion,Austria,low
+107,Merchant_107,fashion,Romania,low
+108,Merchant_108,crypto,Romania,medium
+109,Merchant_109,travel,France,low
+110,Merchant_110,restaurant,Austria,low
+111,Merchant_111,fashion,Austria,low
+112,Merchant_112,gambling,Germany,low
+113,Merchant_113,electronics,Poland,low
+114,Merchant_114,digital_services,United Kingdom,medium
+115,Merchant_115,electronics,Poland,low
+116,Merchant_116,electronics,Belgium,medium
+117,Merchant_117,travel,United Kingdom,low
+118,Merchant_118,fashion,Romania,low
+119,Merchant_119,luxury,United Kingdom,high
+120,Merchant_120,crypto,Spain,low
+121,Merchant_121,electronics,Germany,medium
+122,Merchant_122,digital_services,United Kingdom,medium
+123,Merchant_123,gambling,Austria,low
+124,Merchant_124,restaurant,Germany,low
+125,Merchant_125,crypto,Austria,high
+126,Merchant_126,travel,Italy,low
+127,Merchant_127,restaurant,Poland,low
+128,Merchant_128,restaurant,Romania,medium
+129,Merchant_129,crypto,Spain,high
+130,Merchant_130,digital_services,Romania,low
+131,Merchant_131,fuel,Italy,high
+132,Merchant_132,gambling,Poland,high
+133,Merchant_133,luxury,Romania,high
+134,Merchant_134,digital_services,Spain,medium
+135,Merchant_135,electronics,Spain,low
+136,Merchant_136,restaurant,Austria,low
+137,Merchant_137,travel,Germany,high
+138,Merchant_138,crypto,Spain,low
+139,Merchant_139,electronics,Romania,low
+140,Merchant_140,restaurant,Austria,low
+141,Merchant_141,gambling,Romania,low
+142,Merchant_142,luxury,France,high
+143,Merchant_143,digital_services,Austria,low
+144,Merchant_144,crypto,Germany,low
+145,Merchant_145,digital_services,Austria,low
+146,Merchant_146,electronics,Poland,medium
+147,Merchant_147,travel,Austria,low
+148,Merchant_148,electronics,Belgium,low
+149,Merchant_149,restaurant,Austria,medium
+150,Merchant_150,fashion,Italy,low
+151,Merchant_151,restaurant,Netherlands,low
+152,Merchant_152,electronics,Belgium,low
+153,Merchant_153,fashion,Italy,medium
+154,Merchant_154,grocery,United Kingdom,low
+155,Merchant_155,fashion,United Kingdom,low
+156,Merchant_156,travel,Netherlands,medium
+157,Merchant_157,gambling,Belgium,high
+158,Merchant_158,fuel,United Kingdom,medium
+159,Merchant_159,grocery,Poland,low
+160,Merchant_160,electronics,United Kingdom,low
+161,Merchant_161,restaurant,Spain,low
+162,Merchant_162,luxury,Belgium,high
+163,Merchant_163,electronics,Netherlands,high
+164,Merchant_164,digital_services,France,low
+165,Merchant_165,grocery,United Kingdom,low
+166,Merchant_166,digital_services,Poland,low
+167,Merchant_167,travel,Germany,low
+168,Merchant_168,crypto,Austria,medium
+169,Merchant_169,fuel,Belgium,medium
+170,Merchant_170,electronics,Italy,low
+171,Merchant_171,grocery,Italy,low
+172,Merchant_172,travel,Belgium,low
+173,Merchant_173,grocery,Poland,medium
+174,Merchant_174,crypto,United Kingdom,high
+175,Merchant_175,restaurant,Austria,medium
+176,Merchant_176,digital_services,Romania,low
+177,Merchant_177,grocery,France,medium
+178,Merchant_178,luxury,Romania,medium
+179,Merchant_179,crypto,Italy,high
+180,Merchant_180,fuel,Romania,medium
+181,Merchant_181,fuel,Italy,low
+182,Merchant_182,restaurant,Italy,low
+183,Merchant_183,grocery,United Kingdom,low
+184,Merchant_184,digital_services,Belgium,low
+185,Merchant_185,gambling,Belgium,medium
+186,Merchant_186,digital_services,United Kingdom,low
+187,Merchant_187,travel,Netherlands,medium
+188,Merchant_188,luxury,Austria,medium
+189,Merchant_189,gambling,Germany,low
+190,Merchant_190,travel,Romania,low
+191,Merchant_191,digital_services,France,low
+192,Merchant_192,electronics,United Kingdom,low
+193,Merchant_193,digital_services,France,low
+194,Merchant_194,restaurant,United Kingdom,low
+195,Merchant_195,electronics,Italy,low
+196,Merchant_196,electronics,Belgium,low
+197,Merchant_197,crypto,United Kingdom,high
+198,Merchant_198,grocery,Belgium,low
+199,Merchant_199,crypto,France,high
+200,Merchant_200,grocery,Spain,medium
+201,Merchant_201,crypto,France,high
+202,Merchant_202,travel,Poland,low
+203,Merchant_203,luxury,Romania,low
+204,Merchant_204,fuel,Spain,low
+205,Merchant_205,grocery,United Kingdom,low
+206,Merchant_206,digital_services,Romania,low
+207,Merchant_207,travel,Belgium,low
+208,Merchant_208,travel,Romania,low
+209,Merchant_209,digital_services,United Kingdom,low
+210,Merchant_210,digital_services,Romania,low
+211,Merchant_211,digital_services,Spain,high
+212,Merchant_212,grocery,Germany,medium
+213,Merchant_213,fashion,Belgium,low
+214,Merchant_214,travel,Belgium,low
+215,Merchant_215,grocery,Italy,low
+216,Merchant_216,fashion,France,medium
+217,Merchant_217,digital_services,Austria,low
+218,Merchant_218,grocery,Romania,low
+219,Merchant_219,gambling,Romania,high
+220,Merchant_220,digital_services,Netherlands,low
+221,Merchant_221,digital_services,France,medium
+222,Merchant_222,fashion,Netherlands,high
+223,Merchant_223,grocery,Spain,low
+224,Merchant_224,fashion,Austria,medium
+225,Merchant_225,gambling,Poland,high
+226,Merchant_226,fuel,Germany,low
+227,Merchant_227,restaurant,Italy,low
+228,Merchant_228,gambling,Poland,medium
+229,Merchant_229,luxury,Italy,medium
+230,Merchant_230,gambling,Germany,medium
+231,Merchant_231,electronics,Italy,low
+232,Merchant_232,gambling,Italy,medium
+233,Merchant_233,digital_services,Netherlands,low
+234,Merchant_234,luxury,France,high
+235,Merchant_235,gambling,France,low
+236,Merchant_236,travel,Spain,medium
+237,Merchant_237,gambling,Austria,low
+238,Merchant_238,gambling,Austria,high
+239,Merchant_239,grocery,Belgium,medium
+240,Merchant_240,grocery,United Kingdom,high
+241,Merchant_241,grocery,Belgium,medium
+242,Merchant_242,gambling,Austria,high
+243,Merchant_243,gambling,United Kingdom,medium
+244,Merchant_244,electronics,Poland,medium
+245,Merchant_245,digital_services,Spain,low
+246,Merchant_246,digital_services,United Kingdom,low
+247,Merchant_247,luxury,Spain,medium
+248,Merchant_248,restaurant,United Kingdom,low
+249,Merchant_249,digital_services,Spain,low
+250,Merchant_250,gambling,France,high
+251,Merchant_251,digital_services,Austria,medium
+252,Merchant_252,grocery,Italy,low
+253,Merchant_253,travel,Netherlands,low
+254,Merchant_254,restaurant,Netherlands,low
+255,Merchant_255,travel,Spain,low
+256,Merchant_256,travel,France,low
+257,Merchant_257,digital_services,Austria,low
+258,Merchant_258,crypto,Germany,high
+259,Merchant_259,electronics,Spain,low
+260,Merchant_260,fashion,Spain,low
+261,Merchant_261,electronics,Romania,low
+262,Merchant_262,electronics,Netherlands,low
+263,Merchant_263,gambling,Spain,high
+264,Merchant_264,restaurant,Italy,low
+265,Merchant_265,electronics,Spain,low
+266,Merchant_266,electronics,Germany,medium
+267,Merchant_267,fashion,Germany,low
+268,Merchant_268,gambling,Austria,medium
+269,Merchant_269,fashion,Romania,low
+270,Merchant_270,grocery,Belgium,medium
+271,Merchant_271,fashion,Italy,low
+272,Merchant_272,gambling,United Kingdom,high
+273,Merchant_273,gambling,Spain,high
+274,Merchant_274,fashion,Poland,low
+275,Merchant_275,gambling,Italy,high
+276,Merchant_276,fuel,Netherlands,medium
+277,Merchant_277,electronics,Belgium,low
+278,Merchant_278,restaurant,Romania,low
+279,Merchant_279,grocery,Poland,high
+280,Merchant_280,digital_services,Netherlands,high
+281,Merchant_281,digital_services,France,medium
+282,Merchant_282,luxury,Romania,high
+283,Merchant_283,fuel,France,low
+284,Merchant_284,luxury,Austria,medium
+285,Merchant_285,fuel,United Kingdom,medium
+286,Merchant_286,gambling,Poland,medium
+287,Merchant_287,fuel,Austria,low
+288,Merchant_288,gambling,Germany,medium
+289,Merchant_289,crypto,Romania,medium
+290,Merchant_290,fashion,Belgium,low
+291,Merchant_291,gambling,Austria,medium
+292,Merchant_292,electronics,Poland,low
+293,Merchant_293,crypto,United Kingdom,medium
+294,Merchant_294,digital_services,United Kingdom,medium
+295,Merchant_295,digital_services,Spain,low
+296,Merchant_296,luxury,Germany,medium
+297,Merchant_297,electronics,Romania,medium
+298,Merchant_298,fuel,Germany,medium
+299,Merchant_299,travel,Netherlands,low
+300,Merchant_300,fashion,United Kingdom,medium
+301,Merchant_301,fuel,Austria,low
+302,Merchant_302,fuel,Germany,low
+303,Merchant_303,fashion,Austria,low
+304,Merchant_304,electronics,Romania,medium
+305,Merchant_305,grocery,Spain,low
+306,Merchant_306,electronics,Belgium,low
+307,Merchant_307,fuel,France,low
+308,Merchant_308,electronics,France,low
+309,Merchant_309,fuel,Italy,medium
+310,Merchant_310,travel,Netherlands,low
+311,Merchant_311,restaurant,Netherlands,low
+312,Merchant_312,restaurant,United Kingdom,high
+313,Merchant_313,electronics,Germany,low
+314,Merchant_314,electronics,France,medium
+315,Merchant_315,restaurant,France,medium
+316,Merchant_316,digital_services,Austria,low
+317,Merchant_317,fashion,Germany,low
+318,Merchant_318,gambling,Belgium,medium
+319,Merchant_319,fashion,Netherlands,high
+320,Merchant_320,electronics,Belgium,low
+321,Merchant_321,restaurant,Romania,low
+322,Merchant_322,restaurant,Netherlands,low
+323,Merchant_323,grocery,Spain,medium
+324,Merchant_324,digital_services,United Kingdom,low
+325,Merchant_325,crypto,Poland,low
+326,Merchant_326,gambling,Poland,medium
+327,Merchant_327,restaurant,Italy,low
+328,Merchant_328,crypto,Spain,low
+329,Merchant_329,luxury,Belgium,medium
+330,Merchant_330,fuel,Italy,low
+331,Merchant_331,digital_services,Belgium,low
+332,Merchant_332,gambling,Germany,low
+333,Merchant_333,luxury,Germany,low
+334,Merchant_334,fashion,Spain,high
+335,Merchant_335,luxury,Italy,medium
+336,Merchant_336,fuel,France,high
+337,Merchant_337,restaurant,Austria,low
+338,Merchant_338,luxury,France,high
+339,Merchant_339,luxury,Spain,medium
+340,Merchant_340,electronics,Belgium,low
+341,Merchant_341,travel,Belgium,low
+342,Merchant_342,crypto,Netherlands,high
+343,Merchant_343,crypto,France,high
+344,Merchant_344,crypto,Netherlands,high
+345,Merchant_345,fuel,Poland,low
+346,Merchant_346,electronics,Austria,low
+347,Merchant_347,fashion,United Kingdom,low
+348,Merchant_348,fuel,France,low
+349,Merchant_349,restaurant,Italy,low
+350,Merchant_350,digital_services,France,low
+351,Merchant_351,digital_services,France,low
+352,Merchant_352,luxury,France,high
+353,Merchant_353,luxury,France,high
+354,Merchant_354,luxury,Belgium,high
+355,Merchant_355,gambling,Spain,medium
+356,Merchant_356,fashion,Spain,low
+357,Merchant_357,crypto,Poland,medium
+358,Merchant_358,travel,Austria,low
+359,Merchant_359,fuel,Romania,medium
+360,Merchant_360,grocery,Spain,low
+361,Merchant_361,fashion,France,low
+362,Merchant_362,crypto,Netherlands,high
+363,Merchant_363,fashion,Poland,low
+364,Merchant_364,travel,Italy,high
+365,Merchant_365,digital_services,Poland,low
+366,Merchant_366,grocery,Austria,medium
+367,Merchant_367,luxury,Italy,medium
+368,Merchant_368,electronics,Italy,low
+369,Merchant_369,crypto,Netherlands,high
+370,Merchant_370,gambling,France,high
+371,Merchant_371,digital_services,Romania,low
+372,Merchant_372,fuel,Poland,medium
+373,Merchant_373,electronics,Italy,low
+374,Merchant_374,travel,Austria,low
+375,Merchant_375,electronics,Germany,medium
+376,Merchant_376,restaurant,Spain,low
+377,Merchant_377,restaurant,Austria,low
+378,Merchant_378,digital_services,Italy,medium
+379,Merchant_379,luxury,Germany,high
+380,Merchant_380,crypto,Belgium,high
+381,Merchant_381,digital_services,Poland,low
+382,Merchant_382,electronics,Belgium,low
+383,Merchant_383,travel,Belgium,low
+384,Merchant_384,luxury,Italy,high
+385,Merchant_385,gambling,United Kingdom,high
+386,Merchant_386,restaurant,Netherlands,medium
+387,Merchant_387,gambling,Belgium,low
+388,Merchant_388,digital_services,Netherlands,low
+389,Merchant_389,travel,Austria,low
+390,Merchant_390,grocery,United Kingdom,medium
+391,Merchant_391,fashion,Poland,low
+392,Merchant_392,travel,Italy,low
+393,Merchant_393,gambling,Spain,low
+394,Merchant_394,fuel,Austria,medium
+395,Merchant_395,luxury,France,low
+396,Merchant_396,digital_services,France,low
+397,Merchant_397,electronics,Austria,low
+398,Merchant_398,luxury,Germany,high
+399,Merchant_399,gambling,Germany,high
+400,Merchant_400,crypto,Austria,low
+401,Merchant_401,travel,United Kingdom,low
+402,Merchant_402,travel,Romania,low
+403,Merchant_403,luxury,Poland,medium
+404,Merchant_404,digital_services,Spain,medium
+405,Merchant_405,fashion,Belgium,low
+406,Merchant_406,digital_services,Romania,low
+407,Merchant_407,digital_services,Belgium,low
+408,Merchant_408,fuel,Netherlands,low
+409,Merchant_409,restaurant,United Kingdom,low
+410,Merchant_410,luxury,Poland,high
+411,Merchant_411,gambling,Belgium,medium
+412,Merchant_412,fuel,Romania,low
+413,Merchant_413,digital_services,Austria,low
+414,Merchant_414,electronics,Austria,low
+415,Merchant_415,restaurant,Belgium,low
+416,Merchant_416,restaurant,France,low
+417,Merchant_417,grocery,Germany,low
+418,Merchant_418,fuel,Romania,low
+419,Merchant_419,restaurant,Spain,low
+420,Merchant_420,luxury,Netherlands,low
+421,Merchant_421,luxury,Spain,high
+422,Merchant_422,gambling,Belgium,medium
+423,Merchant_423,restaurant,Romania,low
+424,Merchant_424,fashion,Spain,medium
+425,Merchant_425,digital_services,Romania,low
+426,Merchant_426,electronics,Germany,low
+427,Merchant_427,gambling,Netherlands,low
+428,Merchant_428,electronics,Spain,low
+429,Merchant_429,gambling,Belgium,high
+430,Merchant_430,travel,Belgium,high
+431,Merchant_431,fuel,Netherlands,low
+432,Merchant_432,crypto,Italy,medium
+433,Merchant_433,crypto,United Kingdom,high
+434,Merchant_434,digital_services,Germany,medium
+435,Merchant_435,luxury,Belgium,medium
+436,Merchant_436,restaurant,Austria,medium
+437,Merchant_437,fuel,Italy,low
+438,Merchant_438,fuel,Spain,low
+439,Merchant_439,grocery,France,low
+440,Merchant_440,travel,Belgium,low
+441,Merchant_441,gambling,France,low
+442,Merchant_442,crypto,Spain,high
+443,Merchant_443,travel,Romania,low
+444,Merchant_444,gambling,France,high
+445,Merchant_445,luxury,Germany,high
+446,Merchant_446,crypto,Germany,high
+447,Merchant_447,crypto,Germany,high
+448,Merchant_448,fuel,Belgium,low
+449,Merchant_449,electronics,France,medium
+450,Merchant_450,gambling,Netherlands,high
+451,Merchant_451,gambling,United Kingdom,low
+452,Merchant_452,crypto,Poland,medium
+453,Merchant_453,restaurant,Italy,low
+454,Merchant_454,fuel,Belgium,low
+455,Merchant_455,digital_services,Germany,low
+456,Merchant_456,crypto,Germany,medium
+457,Merchant_457,electronics,Austria,medium
+458,Merchant_458,electronics,Netherlands,low
+459,Merchant_459,crypto,Italy,high
+460,Merchant_460,electronics,Austria,low
+461,Merchant_461,digital_services,France,medium
+462,Merchant_462,grocery,Belgium,medium
+463,Merchant_463,restaurant,Poland,low
+464,Merchant_464,electronics,Romania,low
+465,Merchant_465,fuel,Belgium,low
+466,Merchant_466,gambling,Romania,low
+467,Merchant_467,restaurant,Germany,low
+468,Merchant_468,crypto,Germany,low
+469,Merchant_469,electronics,Netherlands,low
+470,Merchant_470,grocery,United Kingdom,high
+471,Merchant_471,electronics,United Kingdom,low
+472,Merchant_472,digital_services,Romania,low
+473,Merchant_473,digital_services,United Kingdom,high
+474,Merchant_474,gambling,Romania,low
+475,Merchant_475,crypto,United Kingdom,medium
+476,Merchant_476,crypto,United Kingdom,high
+477,Merchant_477,digital_services,Romania,low
+478,Merchant_478,fuel,France,high
+479,Merchant_479,digital_services,Poland,low
+480,Merchant_480,luxury,Germany,medium
+481,Merchant_481,electronics,France,high
+482,Merchant_482,digital_services,Italy,low
+483,Merchant_483,grocery,France,low
+484,Merchant_484,gambling,Poland,medium
+485,Merchant_485,gambling,Austria,medium
+486,Merchant_486,electronics,Poland,medium
+487,Merchant_487,electronics,Spain,low
+488,Merchant_488,travel,Italy,medium
+489,Merchant_489,travel,United Kingdom,low
+490,Merchant_490,digital_services,Austria,low
+491,Merchant_491,fashion,Romania,low
+492,Merchant_492,gambling,Netherlands,high
+493,Merchant_493,electronics,Austria,low
+494,Merchant_494,travel,Italy,medium
+495,Merchant_495,crypto,France,medium
+496,Merchant_496,luxury,Netherlands,high
+497,Merchant_497,restaurant,United Kingdom,low
+498,Merchant_498,crypto,Netherlands,high
+499,Merchant_499,electronics,Belgium,low
+500,Merchant_500,gambling,France,medium
