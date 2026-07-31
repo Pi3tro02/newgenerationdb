@@ -10,7 +10,7 @@ Il sistema simulerà un flusso continuo di transazioni finanziarie, replicando l
 * **REVIEW**
 * **BLOCKED**
 
-Il progetto prevede inoltre un confronto sperimentale tra VoltDB e un **database relazionale tradizionale**, come PostgreSQL, valutando sia le prestazioni operative sia l'efficacia nel rilevamento delle transazioni fraudolente.
+Il progetto prevede inoltre un confronto sperimentale tra VoltDB e il **database relazionale tradizionale**, PostgreSQL, valutando sia le prestazioni operative sia l'efficacia nel rilevamento delle transazioni fraudolente.
 
 ---
 
@@ -151,8 +151,6 @@ status                 String    APPROVED | REVIEW | BLOCKED (derivato da risk_s
 fraud_label            Integer   1 = transazione simulata come fraudolenta (ground truth),
                                    0 = transazione legittima (probabilità di frode: 2.5%)
 ```
-
-Campi **non presenti** nel dataset reale (rimossi rispetto alla versione precedente di questo documento): `ip_address`, `payment_method`, `latitude`, `longitude`, `merchant_category` diretto sulla transazione (va recuperato tramite join su `merchant_id`).
 
 ## alerts.csv (una riga per ogni transazione con stato REVIEW o BLOCKED)
 
