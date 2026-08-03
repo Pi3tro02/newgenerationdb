@@ -1,0 +1,15 @@
+-- Codice per caricare le tabelle anagrafiche in VoltDB.
+-- Eseguire questi comandi dentro il container fraud-voltdb:
+--
+-- docker exec -it fraud-voltdb bash
+--
+-- csvloader customers --file /data/customers.csv --skip 1
+-- csvloader cards --file /data/cards.csv --skip 1
+-- csvloader merchants --file /data/merchants.csv --skip 1
+--
+-- Verifica:
+--
+-- sqlcmd
+-- SELECT COUNT(*) FROM customers;
+-- SELECT COUNT(*) FROM cards;
+-- SELECT COUNT(*) FROM merchants;

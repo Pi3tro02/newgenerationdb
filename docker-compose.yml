@@ -17,5 +17,24 @@ services:
       timeout: 5s
       retries: 10
 
+  voltdb:
+    image: basvanbeek/voltdb-community:latest
+    platform: linux/amd64
+    container_name: fraud-voltdb
+    environment:
+      HOST_COUNT: "1"
+      HOSTS: "voltdb"
+    ports:
+      - "21212:21212"
+      - "21211:21211"
+      - "8080:8080"
+    volumes:
+      - voltdb_data:/var/voltdb
+      - ./database/voltdb:/database/voltdb
+      - ./customers.csv:/data/customers.csv:ro
+      - ./cards.csv:/data/cards.csv:ro
+      - ./merchants.csv:/data/merchants.csv:ro
+
 volumes:
   postgres_data:
+  voltdb_data:
