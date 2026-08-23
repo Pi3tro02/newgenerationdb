@@ -122,67 +122,22 @@ def fetch_content(api_url: str, customer_id: int, card_id: int, merchant_id: int
         }
     }
 
-def evaluate_transaction(transaction: dict, customer: dict, card: dict, merchant: dict) -> dict:
-    is_foreign_country = transaction["country"] != customer["home_country"]
+import os
+import sys
 
-    tx_time = transaction["transaction_time"]
-    if isinstance(tx_time, str):
-        tx_time = datetime.strptime(tx_time, "%Y-%m-%d %H:%M:%S")
+# Assicura la raggiungibilità del modulo `services.common` nel sys.path
+_current_dir = os.path.dirname(os.path.abspath(__file__))
+_services_dir = os.path.abspath(os.path.join(_current_dir, "../.."))
+_workspace_root = os.path.abspath(os.path.join(_services_dir, ".."))
+for _p in [_workspace_root, _services_dir]:
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
 
-    is_night_transaction = tx_time.hour < 6
+try:
+    from services.common.risk_engine import evaluate_transaction, build_alert_reason
+except ImportError:
+    from common.risk_engine import evaluate_transaction, build_alert_reason
 
-    risk_score = 0
-
-    if float(transaction["amount"]) > float(customer["avg_transaction_amount"]) * 5:
-        risk_score += 30
-
-    if is_night_transaction:
-        risk_score += 10
-
-    if is_foreign_country:
-        risk_score += 20
-
-    if merchant.get("risk_level") == "high":
-        risk_score += 25
-    elif merchant.get("risk_level") == "medium":
-        risk_score += 10
-
-    if card.get("card_status") == "flagged":
-        risk_score += 40
-
-    if transaction.get("channel") == "online" and str(transaction.get("device_id", "")).startswith("DEV_NEW"):
-        risk_score += 15
-
-    if customer.get("risk_profile") == "high":
-        risk_score += 10
-
-    risk_score = min(risk_score, 100)
-
-    if risk_score >= 70:
-        status = "BLOCKED"
-    elif risk_score >= 40:
-        status = "REVIEW"
-    else:
-        status = "APPROVED"
-
-    return {
-        "is_foreign_country": is_foreign_country,
-        "is_night_transaction": is_night_transaction,
-        "risk_score": risk_score,
-        "status": status
-    }
-
-def build_alert_reason(is_high_amount: bool, is_night: bool, is_foreign: bool) -> str:
-    reasons = []
-
-    if is_high_amount: 
-        reasons.append("high_amount")
-    if is_night:
-        reasons.append("night_transaction")
-    if is_foreign:
-        reasons.append("foreign_country")
-
-    return ";".join(reasons) if reasons else "risk_score_threshold"
 
 def process_transaction(api_url: str, transaction: dict) -> dict:
     transaction_id = int(transaction["transaction_id"])
