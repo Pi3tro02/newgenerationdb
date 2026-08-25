@@ -1,0 +1,33 @@
+{
+  "target": "both",
+  "transactions_csv": "transactions.csv",
+  "limit": 100,
+  "tps": 20.0,
+  "total_benchmark_time_s": 5.750364398001693,
+  "mismatch_count": 0,
+  "mismatches": [],
+  "targets": {
+    "postgres": {
+      "transactions": 100,
+      "successful": 100,
+      "errors": 0,
+      "throughput_tx_s": 61.18971937438708,
+      "average_latency_ms": 16.342614580098598,
+      "p50_latency_ms": 16.089008500784985,
+      "p95_latency_ms": 23.757659051989318,
+      "p99_latency_ms": 28.070832292396606,
+      "max_latency_ms": 45.37130900280317
+    },
+    "voltdb": {
+      "transactions": 100,
+      "successful": 100,
+      "errors": 0,
+      "throughput_tx_s": 24.917850885324235,
+      "average_latency_ms": 40.131871909907204,
+      "p50_latency_ms": 36.58108450144937,
+      "p95_latency_ms": 76.28453930046817,
+      "p99_latency_ms": 90.99041392310035,
+      "max_latency_ms": 104.11562800072716
+    }
+  }
+}
