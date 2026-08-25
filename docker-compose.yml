@@ -11,6 +11,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/postgres:/docker-entrypoint-initdb.d
+      - ./customers.csv:/data/customers.csv:ro
+      - ./cards.csv:/data/cards.csv:ro
+      - ./merchants.csv:/data/merchants.csv:ro
+      - ./transactions.csv:/data/transactions.csv:ro
+      - ./alerts.csv:/data/alerts.csv:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U fraud -d frauddb"]
       interval: 10s

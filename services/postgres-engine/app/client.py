@@ -1,4 +1,4 @@
-"""
+﻿"""
 Client PostgreSQL per il sistema di rilevamento frodi.
 Interfaccia con la base dati PostgreSQL tramite psycopg2 per il recupero del contesto,
 la valutazione del rischio e la registrazione in tempo reale delle transazioni ed alert.
@@ -7,6 +7,7 @@ la valutazione del rischio e la registrazione in tempo reale delle transazioni e
 import argparse
 import csv
 from datetime import datetime
+import os
 import sys
 import time
 from typing import Dict, List, Any
@@ -18,10 +19,27 @@ except ImportError:
     psycopg2 = None
     RealDictCursor = None
 
-try:
-    from .risk_engine import evaluate_transaction, build_alert_reason
-except ImportError:
-    from risk_engine import evaluate_transaction, build_alert_reason
+# ---------------------------------------------------------------------------
+# Import risk engine comune
+# ---------------------------------------------------------------------------
+
+_CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+_SERVICES_DIR = os.path.abspath(
+    os.path.join(_CURRENT_DIR, "../..")
+)
+
+_WORKSPACE_ROOT = os.path.abspath(
+    os.path.join(_SERVICES_DIR, "..")
+)
+
+if _WORKSPACE_ROOT not in sys.path:
+    sys.path.insert(0, _WORKSPACE_ROOT)
+
+from services.common.risk_engine import (
+    evaluate_transaction,
+    build_alert_reason,
+)
 
 
 def connect_db(dsn: str):
@@ -30,7 +48,7 @@ def connect_db(dsn: str):
     Gestisce eventuali errori di connessione fornendo messaggi chiari.
     """
     if psycopg2 is None:
-        print("[ERRORE] Il modulo 'psycopg2' non è installato nell'ambiente Python.", file=sys.stderr)
+        print("[ERRORE] Il modulo 'psycopg2' non Ã¨ installato nell'ambiente Python.", file=sys.stderr)
         sys.exit(1)
 
     try:
@@ -110,7 +128,7 @@ def process_transaction(conn, transaction: dict) -> dict:
     - Recupera il contesto dal DB tramite fetch_context.
     - Calcola lo stato ed il punteggio di rischio con evaluate_transaction.
     - Inserisce la riga in `transactions` (query parametrizzata).
-    - Se lo stato è diverso da 'APPROVED', inserisce una riga in `alerts`.
+    - Se lo stato Ã¨ diverso da 'APPROVED', inserisce una riga in `alerts`.
     - Esegue il commit della transazione.
     - Ritorna il risultato di evaluate_transaction con l'aggiunta di transaction_id.
     """
@@ -268,3 +286,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

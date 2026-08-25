@@ -6,9 +6,9 @@
 -- =============================================================================
 
 -- Caricamento dati anagrafici e di supporto
-\copy customers FROM 'customers.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',');
-\copy cards FROM 'cards.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',');
-\copy merchants FROM 'merchants.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',');
+\copy customers FROM '/data/customers.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',');
+\copy cards FROM '/data/cards.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',');
+\copy merchants FROM '/data/merchants.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',');
 
 -- -----------------------------------------------------------------------------
 -- Verifica del conteggio righe caricate per tutte le tabelle
