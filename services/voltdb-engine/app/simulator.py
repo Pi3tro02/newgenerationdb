@@ -27,7 +27,7 @@ CURRENT_DIR = Path(__file__).resolve().parent
 SERVICES_DIR = CURRENT_DIR.parents[1]
 WORKSPACE_ROOT = SERVICES_DIR.parent
 
-for path in (WORKSPACE_ROOT, SERVICES_DIR):
+for path in (CURRENT_DIR, WORKSPACE_ROOT, SERVICES_DIR):
     path_str = str(path)
 
     if path_str not in sys.path:

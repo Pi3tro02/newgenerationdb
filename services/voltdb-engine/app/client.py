@@ -20,7 +20,7 @@ import sys
 import urllib.parse
 import urllib.request
 import time
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 
 
 # ---------------------------------------------------------------------------

@@ -66,7 +66,11 @@ def fetch_context(conn, customer_id: int, card_id: int, merchant_id: int) -> dic
     In caso di carta o esercente non trovati, vengono applicati valori di default sicuri.
     """
     context = {
-        "customer": {"home_country": "IT", "risk_profile": "low", "avg_transaction_amount": 100.0},
+        "customer": {
+            "home_country": "Italy", 
+            "risk_profile": "low", 
+            "avg_transaction_amount": 100.0
+            },
         "card": {"card_status": "active"},
         "merchant": {"risk_level": "low"}
     }
