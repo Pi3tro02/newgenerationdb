@@ -11,11 +11,10 @@ ResponsabilitÃ :
 La lettura di transactions.csv, il rate limiting e il benchmark
 sono responsabilitÃ  del simulator.
 """
-
+import json
 import argparse
 import csv
 from datetime import datetime
-import json
 import os
 import sys
 import urllib.parse
@@ -583,4 +582,3 @@ def process_transaction(
         "is_night_transaction": is_night,
         "fraud_label": fraud_label,
     }
-
