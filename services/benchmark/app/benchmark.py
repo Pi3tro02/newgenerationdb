@@ -17,6 +17,7 @@ for path in (WORKSPACE_ROOT, SERVICES_DIR, VOLTDB_APP_DIR):
         sys.path.insert(0, str(path))
 
 from stream import transaction_stream
+from metrics import evaluate_fraud_detection, format_metrics_report
 
 def now_iso():
     return datetime.now(timezone.utc).isoformat()
@@ -66,6 +67,7 @@ def run_one(target, client, connection_or_url, tx):
     return {
         "target": target,
         "transaction_id": tx.get("transaction_id"),
+        "fraud_label": tx.get("fraud_label"),
         "start_time": start_time,
         "end_time": end_time,
         "latency_ms": (t1 - t0) * 1000,
@@ -252,6 +254,8 @@ def main() -> int:
 
         total_latency_s = sum(latencies) / 1000.0
 
+        fraud_eval = evaluate_fraud_detection(target_records)
+
         summary["targets"][target] = {
             "transactions": len(target_records),
             "successful": len(successful),
@@ -270,6 +274,7 @@ def main() -> int:
             "p95_latency_ms": percentile(latencies, 95),
             "p99_latency_ms": percentile(latencies, 99),
             "max_latency_ms": max(latencies) if latencies else 0.0,
+            "fraud_evaluation": fraud_eval,
         }
 
     results_dir = Path(args.results_dir)
@@ -286,6 +291,7 @@ def main() -> int:
     fieldnames = [
         "target",
         "transaction_id",
+        "fraud_label",
         "start_time",
         "end_time",
         "latency_ms",
@@ -320,6 +326,22 @@ def main() -> int:
         print(f"P95             : {metrics['p95_latency_ms']:.3f} ms")
         print(f"P99             : {metrics['p99_latency_ms']:.3f} ms")
         print(f"Max latency     : {metrics['max_latency_ms']:.3f} ms")
+
+        fraud_eval = metrics.get("fraud_evaluation", {})
+        if fraud_eval.get("total_evaluated", 0) > 0:
+            strict = fraud_eval.get("strict_mode", {})
+            broad = fraud_eval.get("broad_mode", {})
+            print("  --- Metriche Frode ---")
+            print(
+                f"  Severa (BLOCKED) : Precision={strict['precision']*100:.2f}% | "
+                f"Recall={strict['recall']*100:.2f}% | F1={strict['f1_score']*100:.2f}% | "
+                f"TP={strict['tp']} FP={strict['fp']} FN={strict['fn']} TN={strict['tn']}"
+            )
+            print(
+                f"  Ampia (REV+BLK)  : Precision={broad['precision']*100:.2f}% | "
+                f"Recall={broad['recall']*100:.2f}% | F1={broad['f1_score']*100:.2f}% | "
+                f"TP={broad['tp']} FP={broad['fp']} FN={broad['fn']} TN={broad['tn']}"
+            )
 
     if args.target == "both":
         print()
