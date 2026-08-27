@@ -10,7 +10,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./database/postgres:/docker-entrypoint-initdb.d
+      - ./database/postgres:/docker-entrypoint-initdb.d:ro
       - ./customers.csv:/data/customers.csv:ro
       - ./cards.csv:/data/cards.csv:ro
       - ./merchants.csv:/data/merchants.csv:ro
@@ -35,10 +35,128 @@ services:
       - "8080:8080"
     volumes:
       - voltdb_data:/var/voltdb
-      - ./database/voltdb:/database/voltdb
+      - ./database/voltdb:/database/voltdb:ro
       - ./customers.csv:/data/customers.csv:ro
       - ./cards.csv:/data/cards.csv:ro
       - ./merchants.csv:/data/merchants.csv:ro
+    healthcheck:
+      test: ["CMD-SHELL", "timeout 2 bash -c '</dev/tcp/localhost/21212'"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  voltdb-init:
+    image: basvanbeek/voltdb-community:latest
+    platform: linux/amd64
+    container_name: fraud-voltdb-init
+    depends_on:
+      voltdb:
+        condition: service_healthy
+    volumes:
+      - ./database/voltdb:/database/voltdb:ro
+      - ./customers.csv:/data/customers.csv:ro
+      - ./cards.csv:/data/cards.csv:ro
+      - ./merchants.csv:/data/merchants.csv:ro
+    entrypoint: []
+    command:
+      - bash
+      - -lc
+      - |
+        until timeout 2 bash -c '</dev/tcp/voltdb/21212'; do
+          echo "Waiting for VoltDB..."
+          sleep 2
+        done
+
+        sqlcmd --servers=voltdb < /database/voltdb/schema.sql
+        csvloader --servers=voltdb customers --file /data/customers.csv --skip 1
+        csvloader --servers=voltdb cards --file /data/cards.csv --skip 1
+        csvloader --servers=voltdb merchants --file /data/merchants.csv --skip 1
+
+  simulator:
+    build:
+      context: .
+      dockerfile: services/Dockerfile
+    container_name: fraud-simulator
+    depends_on:
+      postgres:
+        condition: service_healthy
+      voltdb-init:
+        condition: service_completed_successfully
+    volumes:
+      - ./results:/app/results
+    command:
+      - python
+      - services/simulator/simulator.py
+      - --target
+      - both
+      - --transactions-csv
+      - /app/transactions.csv
+      - --postgres-url
+      - postgresql://fraud:fraud@postgres:5432/frauddb
+      - --voltdb-api-url
+      - http://voltdb:8080/api/2.0
+
+  postgres-engine:
+    build:
+      context: .
+      dockerfile: services/Dockerfile
+    profiles: ["jobs"]
+    container_name: fraud-postgres-engine
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command:
+      - python
+      - services/postgres-engine/app/client.py
+      - --dsn
+      - postgresql://fraud:fraud@postgres:5432/frauddb
+      - --transactions-csv
+      - /app/transactions.csv
+
+  voltdb-engine:
+    build:
+      context: .
+      dockerfile: services/Dockerfile
+    profiles: ["jobs"]
+    container_name: fraud-voltdb-engine
+    depends_on:
+      voltdb-init:
+        condition: service_completed_successfully
+    command:
+      - python
+      - services/voltdb-engine/app/client.py
+      - --voltdb-api-url
+      - http://voltdb:8080/api/2.0
+      - --transactions-csv
+      - /app/transactions.csv
+
+  benchmark:
+    build:
+      context: .
+      dockerfile: services/Dockerfile
+    profiles: ["benchmark"]
+    container_name: fraud-benchmark
+    depends_on:
+      postgres:
+        condition: service_healthy
+      voltdb-init:
+        condition: service_completed_successfully
+    volumes:
+      - ./results:/app/results
+    command:
+      - python
+      - services/benchmark/app/benchmark.py
+      - --target
+      - both
+      - --transactions-csv
+      - /app/transactions.csv
+      - --postgres-url
+      - postgresql://fraud:fraud@postgres:5432/frauddb
+      - --voltdb-api-url
+      - http://voltdb:8080/api/2.0
+      - --results-dir
+      - /app/results
 
 volumes:
   postgres_data:
