@@ -1,7 +1,6 @@
 """
 Modulo comune per la valutazione del rischio delle transazioni (Risk Engine condiviso).
 Utilizzato in modo identico da VoltDB e PostgreSQL per garantire uniformità metodologica nei benchmark.
-Puro Python: nessuna dipendenza esterna o I/O database.
 """
 
 from datetime import datetime

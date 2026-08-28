@@ -4,19 +4,19 @@
 
 Il progetto ha come obiettivo la realizzazione di un sistema di **rilevamento delle frodi finanziarie in tempo reale**, basato su **VoltDB** e sviluppato interamente in **Python**.
 
-Il sistema simulerà un flusso continuo di transazioni finanziarie, replicando la logica del generatore `dataset.py`. Ogni transazione verrà analizzata in tempo reale attraverso un insieme di **regole di rischio**, al fine di determinare uno stato finale:
+Il sistema simula un flusso continuo di transazioni finanziarie, replicando la logica del generatore `dataset.py`. Ogni transazione viene analizzata in tempo reale attraverso un insieme di **regole di rischio**, al fine di determinare uno stato finale:
 
 * **APPROVED**
 * **REVIEW**
 * **BLOCKED**
 
-Il progetto prevede inoltre un confronto sperimentale tra VoltDB e il **database relazionale tradizionale**, PostgreSQL, valutando sia le prestazioni operative sia l'efficacia nel rilevamento delle transazioni fraudolente.
+Il progetto include inoltre un confronto sperimentale tra VoltDB e il **database relazionale tradizionale** PostgreSQL, valutando sia le prestazioni operative sia l'efficacia nel rilevamento delle transazioni fraudolente. Il confronto considera anche aspetti qualitativi, come facilità d'uso, integrazione con Python, strumenti di supporto e complessità operativa.
 
 ---
 
 ## Architettura generale
 
-L'architettura proposta è la seguente:
+L'architettura realizzata è la seguente:
 
 ```text
                  SIMULATORE TRANSAZIONI
@@ -50,11 +50,15 @@ L'architettura proposta è la seguente:
 
 L'obiettivo è garantire che entrambi i database elaborino le stesse transazioni e utilizzino la stessa logica di valutazione del rischio, così da rendere il confronto il più possibile equo.
 
+La logica antifrode è stata estratta in un modulo comune (`services/common/risk_engine.py`) usato sia dal client PostgreSQL sia dal client VoltDB. In questo modo le differenze osservate nei benchmark dipendono dall'architettura di accesso ai dati e dai database utilizzati, non da differenze accidentali nelle regole.
+
+Nella prima versione il client VoltDB recuperava il contesto della transazione con query `@AdHoc` via JSON API per ogni operazione. Dopo i primi risultati sperimentali è stata introdotta anche una versione ottimizzata tramite cache lato client: le tabelle anagrafiche `customers`, `cards` e `merchants` vengono precaricate in memoria all'avvio del benchmark, riducendo il numero di round-trip verso VoltDB durante l'elaborazione dello stream.
+
 ---
 
 ## Flusso di elaborazione
 
-Il sistema seguirà il seguente flusso:
+Il sistema segue il seguente flusso:
 
 ```text
 1. Generazione della transazione
@@ -63,7 +67,7 @@ Il sistema seguirà il seguente flusso:
 2. Inserimento nel database
               │
               ▼
-3. Recupero dello storico del cliente (avg_transaction_amount, risk_profile, home_country)
+3. Recupero del contesto cliente/carta/merchant
               │
               ▼
 4. Applicazione delle regole antifrode
@@ -84,6 +88,8 @@ Il sistema seguirà il seguente flusso:
               ▼
 8. Raccolta delle metriche
 ```
+
+Nel caso VoltDB ottimizzato, il punto 3 viene eseguito leggendo il contesto dalla cache applicativa invece di interrogare ogni volta il database. Restano invece persistenti su VoltDB gli inserimenti delle transazioni elaborate e degli alert generati.
 
 ---
 
@@ -131,7 +137,7 @@ risk_level      String    low | medium | high
                            - altrimenti: pesi 70% / 25% / 5%
 ```
 
-## transactions.csv (fino a 100.000 righe)
+## transactions.csv (70.125 righe nel dataset corrente)
 
 ```text
 transaction_id       Integer   (PK)
@@ -151,6 +157,8 @@ status                 String    APPROVED | REVIEW | BLOCKED (derivato da risk_s
 fraud_label            Integer   1 = transazione simulata come fraudolenta (ground truth),
                                    0 = transazione legittima (probabilità di frode: 2.5%)
 ```
+
+Nota: `dataset.py` tenta di generare fino a 100.000 transazioni, ma il dataset corrente contiene 70.125 righe perché alcune iterazioni scelgono clienti senza carte associate e vengono quindi saltate. Questo comportamento è coerente con la generazione casuale delle carte, in cui un cliente può avere più carte oppure nessuna.
 
 ## alerts.csv (una riga per ogni transazione con stato REVIEW o BLOCKED)
 
@@ -289,14 +297,14 @@ Actual Normal    │ FP        │ TN        │
                  └───────────┴───────────┘
 ```
 
-Le principali metriche saranno:
+Le principali metriche sono:
 
 * **True Positive (TP)**: `fraud_label = 1` e `status = BLOCKED` (o REVIEW, a seconda della soglia);
 * **True Negative (TN)**: `fraud_label = 0` e `status = APPROVED`;
 * **False Positive (FP)**: `fraud_label = 0` ma `status` = BLOCKED/REVIEW;
 * **False Negative (FN)**: `fraud_label = 1` ma `status = APPROVED`.
 
-Da questi valori sarà possibile calcolare:
+Da questi valori vengono calcolate:
 
 * Precision;
 * Recall;
@@ -308,19 +316,19 @@ Da questi valori sarà possibile calcolare:
 
 # Confronto VoltDB vs PostgreSQL
 
-Il progetto prevede un confronto tra:
+Il progetto confronta:
 
 1. **VoltDB**
 2. **PostgreSQL**
 
-Entrambi i sistemi dovranno elaborare:
+Entrambi i sistemi elaborano:
 
 * lo stesso dataset (customers.csv, cards.csv, merchants.csv, transactions.csv);
 * lo stesso flusso di transazioni;
 * le stesse regole antifrode (tabella riportata sopra);
 * le stesse soglie di stato (40 / 70).
 
-In questo modo sarà possibile isolare maggiormente l'impatto del database sulle prestazioni del sistema.
+In questo modo è possibile isolare maggiormente l'impatto del database e dell'architettura di accesso ai dati sulle prestazioni del sistema.
 
 | Aspetto                 | VoltDB   | PostgreSQL |
 | ----------------------- | -------- | ---------- |
@@ -330,30 +338,48 @@ In questo modo sarà possibile isolare maggiormente l'impatto del database sulle
 | Accesso allo storico    | ✓        | ✓          |
 | Throughput              | Misurato | Misurato   |
 | Latenza                 | Misurata | Misurata   |
-| CPU                     | Misurata | Misurata   |
-| RAM                     | Misurata | Misurata   |
+| CPU                     | Non misurata nel benchmark finale | Non misurata nel benchmark finale |
+| RAM                     | Non misurata nel benchmark finale | Non misurata nel benchmark finale |
 | Rilevamento frodi       | Misurato | Misurato   |
-| Scalabilità             | Testata  | Testata    |
+| Scalabilità             | Valutata tramite carico crescente e TPS nominale | Valutata tramite carico crescente e TPS nominale |
+
+## Confronto qualitativo
+
+Oltre alle metriche numeriche, il progetto valuta anche alcuni aspetti qualitativi richiesti dall'ambito applicativo.
+
+| Aspetto | PostgreSQL | VoltDB |
+| ------- | ---------- | ------ |
+| Facilità di installazione | Più semplice e immediata, soprattutto tramite Docker e strumenti standard | Più specialistico, richiede maggiore attenzione a porte, container e caricamento schema |
+| Modellazione dati | Molto naturale per tabelle relazionali con chiavi primarie ed esterne | Simile a livello tabellare, ma richiede attenzione al partizionamento |
+| Integrazione con Python | Diretta tramite `psycopg2` | Realizzata tramite JSON API; più codice necessario per chiamate e parsing |
+| Debug e interrogazione | Comodo tramite `psql` e SQL standard | Possibile tramite `sqlcmd` e JSON API, ma meno immediato nel prototipo |
+| Supporto e documentazione | Ecosistema maturo e molto diffuso | Più orientato a casi specifici real-time/in-memory |
+| Prestazioni osservate | Migliori nella versione base del confronto | Penalizzato nella versione base, molto migliorato con cache lato client |
+| Adeguatezza real-time | Buona nel prototipo realizzato | Coerente con scenari real-time, ma richiede un accesso ai dati ottimizzato |
+
+Dal punto di vista pratico PostgreSQL è risultato più semplice da usare e integrare. VoltDB ha richiesto più attenzione nella configurazione e nell'accesso ai dati, ma l'ottimizzazione con cache ha mostrato che parte del divario iniziale era dovuta all'architettura applicativa scelta, non solo al database.
 
 ---
 
 # Metriche prestazionali
 
-Per ogni transazione verranno registrati almeno:
+Per ogni transazione vengono registrati:
 
 ```text
 timestamp_inizio
 timestamp_fine
 latency
+status
+eventuale errore
 ```
 
-La latenza sarà calcolata come:
+La latenza viene calcolata come:
 
 ```text
 latency = timestamp_fine - timestamp_inizio
 ```
 
-Le principali metriche saranno:
+Le principali metriche sono:
 
 ### Throughput
 
@@ -385,82 +411,88 @@ Il tempo massimo di elaborazione registrato.
 
 ---
 
-# Piano sperimentale
+# Esperimenti eseguiti
 
-Il confronto potrà essere organizzato attraverso tre esperimenti principali. Le dimensioni indicate sono compatibili con il volume massimo generabile da `dataset.py` (`N_TRANSACTIONS = 100.000`); per lo scenario da 1.000.000 di transazioni sarà necessario aumentare tale parametro nello script.
+Il confronto è stato organizzato in tre gruppi principali di esperimenti: carico crescente, TPS nominale e ottimizzazione VoltDB con cache. I risultati dettagliati sono documentati in `results/esperimenti.md`.
 
-## Esperimento A — Carico crescente
+## Esperimento A - Carico crescente
 
-Il sistema verrà testato con dataset di dimensioni differenti:
+Il sistema è stato testato con:
 
 ```text
 1.000 transazioni
 10.000 transazioni
-100.000 transazioni      (dimensione massima nativa del generatore attuale)
-1.000.000 transazioni    (richiede modifica di N_TRANSACTIONS in dataset.py)
 ```
 
-Per ogni scenario verranno misurati:
+Risultati principali:
 
-* throughput;
-* latenza;
-* utilizzo CPU;
-* utilizzo RAM;
-* accuratezza del rilevamento delle frodi (confronto fraud_label vs status).
+| Run | PostgreSQL avg | PostgreSQL P95 | PostgreSQL tx/s | VoltDB avg | VoltDB P95 | VoltDB tx/s | Mismatch |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1.000 tx | 4.613 ms | 7.013 ms | 216.792 | 20.484 ms | 31.159 ms | 48.819 | 0 |
+| 10.000 tx | 4.232 ms | 6.250 ms | 236.284 | 15.765 ms | 22.518 ms | 63.432 | 0 |
 
----
+Nella versione base PostgreSQL risulta più veloce. VoltDB è penalizzato dall'uso di più chiamate `@AdHoc` via JSON API per ogni transazione.
 
-## Esperimento B — Throughput crescente
+## Esperimento B - TPS nominale
 
-Il numero di transazioni al secondo verrà progressivamente incrementato:
+Sono stati testati tre valori di TPS nominale su 1.000 transazioni:
 
 ```text
 100 TPS
 1.000 TPS
 5.000 TPS
-10.000 TPS
-50.000 TPS
-100.000 TPS
 ```
 
-L'obiettivo sarà individuare il punto in cui il sistema inizia a degradare in termini di:
+Risultati principali:
 
-* latenza;
-* throughput;
-* errori;
-* transazioni non elaborate.
+| TPS nominale | Tempo totale | PostgreSQL tx/s | VoltDB tx/s | Mismatch |
+| ---: | ---: | ---: | ---: | ---: |
+| 100 | 25.414 s | 213.762 | 48.945 | 0 |
+| 1.000 | 26.217 s | 207.934 | 47.378 | 0 |
+| 5.000 | 24.928 s | 216.253 | 49.977 | 0 |
 
-Questo permetterà di identificare il **breakpoint** del sistema.
+I tempi totali sono simili perché il benchmark elabora le transazioni in modo sequenziale e deve attendere entrambi i sistemi. Quando il TPS nominale supera la capacità effettiva del pipeline, il sistema procede al massimo throughput sostenibile.
 
----
+## Esperimento C - Ottimizzazione VoltDB con cache
 
-## Esperimento C — Complessità delle regole
+L'ottimizzazione VoltDB consiste nel precaricare in memoria `customers`, `cards` e `merchants`, evitando tre query di contesto per ogni transazione. Questa scelta è coerente con il dominio applicativo, perché tali tabelle rappresentano anagrafiche relativamente statiche durante il benchmark.
 
-Verranno testati diversi livelli di complessità del motore antifrode, a partire dalle 8 regole reali attualmente implementate (vedi tabella "Motore di valutazione del rischio"):
+Confronto VoltDB base vs VoltDB con cache:
 
-```text
-Scenario 1
-3 regole antifrode (sottoinsieme delle 8 reali)
+| Run | VoltDB avg base | VoltDB avg cache | Miglioramento avg | VoltDB P95 base | VoltDB P95 cache | Throughput base | Throughput cache | Mismatch cache |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1.000 tx | 20.484 ms | 8.459 ms | -58.7% | 31.159 ms | 15.004 ms | 48.819 | 118.219 | 0 |
+| 10.000 tx | 15.765 ms | 6.415 ms | -59.3% | 22.518 ms | 11.534 ms | 63.432 | 155.885 | 0 |
 
-Scenario 2
-8 regole antifrode (tutte quelle attualmente implementate nel dataset)
+L'ottimizzazione riduce sensibilmente il divario rispetto a PostgreSQL. Sul run da 10.000 transazioni, PostgreSQL ha registrato una latenza media di 6.129 ms e VoltDB con cache 6.415 ms, con throughput rispettivamente pari a 163.159 tx/s e 155.885 tx/s.
 
-Scenario 3
-30 regole antifrode (richiede estensione del risk engine)
+## Risultati di rilevamento frodi
 
-Scenario 4
-50 regole antifrode (richiede estensione del risk engine)
-```
+Le metriche di rilevamento frodi sono identiche tra PostgreSQL e VoltDB, perché entrambi usano lo stesso risk engine.
 
-L'obiettivo sarà analizzare l'impatto della complessità della logica antifrode sulle prestazioni dei due sistemi. Gli scenari 3 e 4 richiedono l'aggiunta di nuove regole (es. velocity, geo-distanza) non presenti nel generatore attuale.
+Nel run da 1.000 transazioni:
+
+| Modalità | Precision | Recall | F1 |
+| -------- | --------: | -----: | -: |
+| Severa (`BLOCKED`) | 89.47% | 58.62% | 70.83% |
+| Ampia (`REVIEW` + `BLOCKED`) | 29.00% | 100.00% | 44.96% |
+
+Nel run da 10.000 transazioni:
+
+| Modalità | Precision | Recall | F1 |
+| -------- | --------: | -----: | -: |
+| Severa (`BLOCKED`) | 83.16% | 68.10% | 74.88% |
+| Ampia (`REVIEW` + `BLOCKED`) | 26.51% | 98.28% | 41.76% |
+
+La modalità severa è più precisa ma intercetta meno frodi; la modalità ampia intercetta quasi tutte le frodi ma genera più falsi positivi. Questo rappresenta un compromesso realistico nei sistemi antifrode.
 
 ---
 
 # Architettura Docker
 
-Il progetto sarà organizzato tramite Docker Compose.
+Il progetto è organizzato tramite Docker Compose.
 
-Una possibile struttura è:
+La struttura principale è:
 
 ```text
 fraud-detection/
@@ -470,41 +502,42 @@ fraud-detection/
 ├── services/
 │   │
 │   ├── simulator/
-│   │   ├── Dockerfile
-│   │   └── app/
-│   │       └── generator.py      (basato su dataset.py)
+│   │   └── simulator.py          (wrapper del simulatore)
 │   │
 │   ├── voltdb-engine/
-│   │   ├── Dockerfile
 │   │   └── app/
-│   │       ├── client.py
-│   │       └── risk_engine.py    (implementa le 8 regole reali)
+│   │       ├── client.py         (client VoltDB base + cache)
+│   │       ├── stream.py
+│   │       └── simulator.py
 │   │
 │   ├── postgres-engine/
-│   │   ├── Dockerfile
 │   │   └── app/
 │   │       ├── client.py
-│   │       └── risk_engine.py    (stessa logica di risk_engine.py sopra)
+│   │       └── risk_engine.py    (wrapper di compatibilità)
+│   │
+│   ├── common/
+│   │   └── risk_engine.py        (logica antifrode condivisa)
 │   │
 │   └── benchmark/
-│       ├── Dockerfile
 │       └── app/
 │           ├── benchmark.py
 │           └── metrics.py
 │
 ├── database/
 │   ├── voltdb/
-│   │   └── schema.sql            (tabelle: customers, cards, merchants, transactions, alerts)
+│   │   ├── schema.sql
+│   │   └── load_data.sql
 │   │
 │   └── postgres/
-│       └── schema.sql            (stesso schema)
+│       ├── 01-schema.sql
+│       └── 02-load_data.sql
 │
 ├── results/
 │
 └── README.md
 ```
 
-L'architettura Docker finale sarà composta indicativamente dai seguenti servizi:
+L'architettura Docker finale è composta dai seguenti servizi:
 
 ```text
 ┌─────────────────────┐
@@ -538,7 +571,7 @@ Fraud Detection  Fraud Detection
        Grafici e Analisi
 ```
 
-L'obiettivo finale è consentire l'avvio dell'intero ambiente tramite un singolo comando:
+L'ambiente può essere avviato tramite:
 
 ```bash
 docker compose up
@@ -562,4 +595,14 @@ Il progetto mira quindi a valutare se l'utilizzo di VoltDB possa offrire vantagg
 * applicazione di regole antifrode;
 * necessità di identificare rapidamente comportamenti anomali.
 
-Il confronto finale considererà sia gli aspetti **prestazionali** sia quelli relativi alla **qualità del rilevamento delle frodi** (confronto tra `fraud_label` e `status`), mantenendo invariata la logica antifrode — le 8 regole e le soglie 40/70 descritte in questo documento — tra le due implementazioni.
+Il confronto finale considera sia gli aspetti **prestazionali** sia quelli relativi alla **qualità del rilevamento delle frodi** (confronto tra `fraud_label` e `status`), mantenendo invariata la logica antifrode — le 8 regole e le soglie 40/70 descritte in questo documento — tra le due implementazioni.
+
+---
+
+# Conclusione sintetica
+
+Il sistema realizzato soddisfa l'obiettivo applicativo: costruisce un dataset finanziario sintetico, simula un flusso di transazioni, applica regole antifrode, genera stati finali e alert, e confronta VoltDB con PostgreSQL.
+
+Dal punto di vista funzionale, PostgreSQL e VoltDB risultano equivalenti nei benchmark validi (`mismatch_count = 0`). Dal punto di vista prestazionale, PostgreSQL è più veloce nella versione base, mentre VoltDB migliora sensibilmente dopo l'introduzione della cache lato client. Dal punto di vista del rilevamento frodi, i due sistemi ottengono metriche identiche perché condividono la stessa logica di valutazione.
+
+I principali limiti del prototipo sono l'uso iniziale di query `@AdHoc` via JSON API per VoltDB, l'assenza di procedure VoltDB dedicate, il benchmark sequenziale e la presenza di un unico pattern combinato di frode nel dataset. Questi aspetti rappresentano possibili sviluppi futuri, insieme all'estensione del generatore con scenari come velocity attack, card testing e anomalie geografiche più complesse.

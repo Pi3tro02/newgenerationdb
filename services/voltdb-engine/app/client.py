@@ -1,15 +1,15 @@
 ﻿"""
 VoltDB client.
 
-ResponsabilitÃ :
-- comunicare con VoltDB tramite JSON API;
+Responsabilità:
+- comunicare con VoltDB tramite JSON API o cache;
 - recuperare il contesto necessario per una transazione;
 - applicare il risk engine comune;
 - inserire transactions;
 - inserire alerts.
 
 La lettura di transactions.csv, il rate limiting e il benchmark
-sono responsabilitÃ  del simulator.
+sono responsabilità del simulator.
 """
 import json
 import argparse
@@ -746,6 +746,9 @@ def process_transaction(
 
 
 def percentile(values: List[float], pct: float) -> float:
+    """
+    Metodo che calcola il percentile.
+    """
     if not values:
         return 0.0
 

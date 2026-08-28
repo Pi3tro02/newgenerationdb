@@ -15,6 +15,9 @@ SIMULATOR_PATH = (
 )
 
 def load_simulator_module():
+    """
+    Metodo che carica il modello del simulatore.
+    """
     spec = importlib.util.spec_from_file_location(
         "realtime_simulator",
         SIMULATOR_PATH,

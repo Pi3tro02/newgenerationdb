@@ -1,5 +1,7 @@
 {
     "python.analysis.extraPaths": [
-        "./services/voltdb-engine/app"
+        "./services/voltdb-engine/app",
+        "./services/benchmark/app",
+        "./services/common"
     ]
 }

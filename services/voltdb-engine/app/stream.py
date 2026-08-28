@@ -154,3 +154,4 @@ def count_transactions(csv_path: str) -> int:
         reader = csv.DictReader(file)
 
         return sum(1 for _ in reader)
+        

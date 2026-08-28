@@ -1,3 +1,5 @@
+# File che si occupa della generazione del dataset
+
 import csv
 import random
 from datetime import datetime, timedelta
@@ -27,6 +29,7 @@ card_statuses = ["active", "active", "active", "active", "flagged", "blocked"]
 
 start_date = datetime(2026, 1, 1, 0, 0, 0)
 
+# Metodo che genera un timestamp random
 def random_timestamp():
     return start_date + timedelta(
         days=random.randint(0, 179),
@@ -35,6 +38,7 @@ def random_timestamp():
         seconds=random.randint(0, 59)
     )
 
+# Metodo che definisce lo stato di una transazione in base al suo risk-score
 def status_from_score(score):
     if score >= 70:
         return "BLOCKED"
@@ -45,6 +49,7 @@ def status_from_score(score):
 # Clienti
 customers = []
 
+# Generazione random dei clienti nel file customers.csv
 for i in range(1, N_CUSTOMERS + 1):
     customer_id = i
     home_country = random.choice(countries)
@@ -81,6 +86,7 @@ with open("customers.csv", "w", newline="", encoding="utf-8") as f:
 # Carte di credito
 cards = []
 
+# Generazione randomica delle carte di credito nel file cards.csv
 for i in range(1, N_CARDS + 1):
     card_id = 90000 + i
     customer = random.choice(customers)
@@ -107,6 +113,7 @@ with open("cards.csv", "w", newline="", encoding="utf-8") as f:
 # Esercenti
 merchants = []
 
+# Generazione randomica degli esercenti nel file merchants.csv
 for i in range(1, N_MERCHANTS + 1):
     category = random.choice(categories)
 
@@ -144,6 +151,7 @@ for card in cards:
 # Transazioni
 transactions = []
 
+# Generazione randomica delle transazioni nel file transactions.csv
 for transaction_id in range(1, N_TRANSACTIONS + 1):
     customer = random.choice(customers)
     customer_id = customer["customer_id"]
@@ -184,6 +192,7 @@ for transaction_id in range(1, N_TRANSACTIONS + 1):
     risk_score = 0
     reasons = []
 
+    # Definizione delle motivazioni per il rifiuto di una transazione
     if amount > avg_amount * 5:
         risk_score += 30
         reasons.append("high_amount")
@@ -245,6 +254,7 @@ with open("transactions.csv", "w", newline="", encoding="utf-8") as f:
 alerts = []
 alert_id = 1
 
+# Generazione degli alert nel file alerts.csv
 for t in transactions:
     if t["status"] in ["REVIEW", "BLOCKED"]:
         reason_list = []

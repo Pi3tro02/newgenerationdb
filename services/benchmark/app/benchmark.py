@@ -1,3 +1,7 @@
+"""
+File che esegue il benchmark: confronti, misura della latenza e throughput, e salva i risultati in CSV/JSON
+"""
+
 import argparse
 import csv
 import importlib.util
@@ -45,6 +49,9 @@ def load_client(engine_dir):
     return module
 
 def run_one(target, client, connection_or_url, tx):
+    """
+    Metodo che avvia il benchmark.
+    """
     start_time = now_iso()
     t0 = time.perf_counter()
 
@@ -76,6 +83,9 @@ def run_one(target, client, connection_or_url, tx):
     }
 
 def find_mismatches(records):
+    """
+    Metodo che cerca mismatch tra i risultati ottenuti da PostgreSQL e VoltDB
+    """
     records_by_transaction = {}
 
     for record in records:
