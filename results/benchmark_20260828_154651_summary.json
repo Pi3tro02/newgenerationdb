@@ -1,0 +1,117 @@
+{
+  "target": "both",
+  "transactions_csv": "/app/transactions.csv",
+  "limit": 1000,
+  "tps": null,
+  "total_benchmark_time_s": 25.385410521994345,
+  "mismatch_count": 0,
+  "mismatches": [],
+  "targets": {
+    "postgres": {
+      "transactions": 1000,
+      "successful": 1000,
+      "errors": 0,
+      "throughput_tx_s": 216.79182428122112,
+      "average_latency_ms": 4.612720075194375,
+      "p50_latency_ms": 4.182138996839058,
+      "p95_latency_ms": 7.013225147966295,
+      "p99_latency_ms": 10.405690369079814,
+      "max_latency_ms": 80.52147300622892,
+      "fraud_evaluation": {
+        "total_evaluated": 1000,
+        "ground_truth_distribution": {
+          "legitimate_0": 971,
+          "fraud_1": 29,
+          "fraud_prevalence_pct": 2.9000000000000004
+        },
+        "status_distribution": {
+          "APPROVED": 900,
+          "REVIEW": 81,
+          "BLOCKED": 19,
+          "OTHER": 0
+        },
+        "strict_mode": {
+          "tp": 17,
+          "tn": 969,
+          "fp": 2,
+          "fn": 12,
+          "total": 1000,
+          "precision": 0.8947368421052632,
+          "recall": 0.5862068965517241,
+          "f1_score": 0.7083333333333333,
+          "false_positive_rate": 0.0020597322348094747,
+          "false_negative_rate": 0.41379310344827586,
+          "accuracy": 0.986,
+          "specificity": 0.9979402677651905
+        },
+        "broad_mode": {
+          "tp": 29,
+          "tn": 900,
+          "fp": 71,
+          "fn": 0,
+          "total": 1000,
+          "precision": 0.29,
+          "recall": 1.0,
+          "f1_score": 0.44961240310077516,
+          "false_positive_rate": 0.07312049433573635,
+          "false_negative_rate": 0.0,
+          "accuracy": 0.929,
+          "specificity": 0.9268795056642637
+        }
+      }
+    },
+    "voltdb": {
+      "transactions": 1000,
+      "successful": 1000,
+      "errors": 0,
+      "throughput_tx_s": 48.81927071994248,
+      "average_latency_ms": 20.483714427784435,
+      "p50_latency_ms": 18.375437997747213,
+      "p95_latency_ms": 31.158723903354257,
+      "p99_latency_ms": 48.97178177066962,
+      "max_latency_ms": 338.03073498711456,
+      "fraud_evaluation": {
+        "total_evaluated": 1000,
+        "ground_truth_distribution": {
+          "legitimate_0": 971,
+          "fraud_1": 29,
+          "fraud_prevalence_pct": 2.9000000000000004
+        },
+        "status_distribution": {
+          "APPROVED": 900,
+          "REVIEW": 81,
+          "BLOCKED": 19,
+          "OTHER": 0
+        },
+        "strict_mode": {
+          "tp": 17,
+          "tn": 969,
+          "fp": 2,
+          "fn": 12,
+          "total": 1000,
+          "precision": 0.8947368421052632,
+          "recall": 0.5862068965517241,
+          "f1_score": 0.7083333333333333,
+          "false_positive_rate": 0.0020597322348094747,
+          "false_negative_rate": 0.41379310344827586,
+          "accuracy": 0.986,
+          "specificity": 0.9979402677651905
+        },
+        "broad_mode": {
+          "tp": 29,
+          "tn": 900,
+          "fp": 71,
+          "fn": 0,
+          "total": 1000,
+          "precision": 0.29,
+          "recall": 1.0,
+          "f1_score": 0.44961240310077516,
+          "false_positive_rate": 0.07312049433573635,
+          "false_negative_rate": 0.0,
+          "accuracy": 0.929,
+          "specificity": 0.9268795056642637
+        }
+      }
+    }
+  }
+}
