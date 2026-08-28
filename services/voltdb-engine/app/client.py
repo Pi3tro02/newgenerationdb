@@ -14,7 +14,6 @@ sono responsabilitÃ  del simulator.
 import json
 import argparse
 import csv
-from datetime import datetime
 import os
 import sys
 import urllib.parse
@@ -353,6 +352,168 @@ def fetch_content(
         },
     }
 
+_CONTEXT_CACHE = None
+
+def fetch_all(
+    api_url: str,
+    sql: str,
+    params: Optional[list] = None,
+) -> List[Dict[str, Any]]:
+    """ 
+    Esegue una SELECT e restituisce tutte le righe. 
+    Usata per caricare in memoria le tabelle anagrafiche relativamente statiche: customers, cards e merchants
+    """
+
+    response = call_voltdb(
+        api_url,
+        "@AdHoc",
+        [
+            sql,
+            *(params or []),
+        ],
+    )
+
+    return extract_rows(response)
+
+def load_context_cache(api_url: str) -> dict:
+    """
+    Carica cusomers, cards e merchants in memoria.
+    """
+
+    customer_rows = fetch_all(
+        api_url,
+        """
+        SELECT
+            customer_id,
+            home_country,
+            risk_profile,
+            avg_transaction_amount
+        FROM customers;
+        """,
+    )
+
+    card_rows = fetch_all(
+        api_url,
+        """
+        SELECT 
+            card_id,
+            card_status
+        FROM cards;
+        """,
+    )
+
+    merchant_rows = fetch_all(
+        api_url,
+        """
+        SELECT
+            merchant_id,
+            risk_level
+        FROM merchants;
+        """,
+    )
+
+    customers = {
+        int(row["customer_id"]): {
+            "home_country": row.get("home_country", "Italy"),
+            "risk_profile": row.get("risk_profile", "low"),
+            "avg_transaction_amount": float(
+                row.get("avg_transaction_amount", 100.0)
+            ),
+        }
+        for row in customer_rows
+    }
+
+    cards = {
+        int(row["card_id"]): {
+            "card_status": row.get("card_status", "active"),
+        }
+        for row in card_rows
+    }
+
+    merchants = {
+        int(row["merchant_id"]): {
+            "risk_level": row.get("risk_level", "low"),
+        }
+        for row in merchant_rows
+    }
+
+    return {
+        "customers": customers,
+        "cards": cards,
+        "merchants": merchants
+    }
+
+def initialize_cache(api_url: str) -> dict:
+    """
+    Inizializza la cache globale del client VoltDB.
+    Restituisce i conteggi caricati.
+    """
+
+    global _CONTEXT_CACHE
+
+    _CONTEXT_CACHE = load_context_cache(api_url)
+
+    return {
+        "customers": len(_CONTEXT_CACHE["customers"]),
+        "cards": len(_CONTEXT_CACHE["cards"]),
+        "merchants": len(_CONTEXT_CACHE["merchants"])
+    }
+
+def clear_cache() -> None:
+    """
+    Metodo che svuota la cache globale.
+    """
+
+    global _CONTEXT_CACHE
+    _CONTEXT_CACHE = None
+
+def fetch_content_cached_or_db(
+    api_url: str,
+    customer_id: int,
+    card_id: int,
+    merchant_id: int
+) -> dict:
+    """
+    Metodo che recupera il contesto della cache, se disponibile.
+    Se la cache non è stata inizializzata, usa il percorso base con query verso VoltDB.
+    """
+
+    if _CONTEXT_CACHE is None:
+        return fetch_content(
+            api_url,
+            customer_id,
+            card_id,
+            merchant_id
+        )
+    
+    customer = _CONTEXT_CACHE["customers"].get(
+        customer_id,
+        {
+            "home_country": "Italy",
+            "risk_profile": "low",
+            "avg_transaction_amount": 100.0
+        },
+    )
+
+    card = _CONTEXT_CACHE["cards"].get(
+        card_id,
+        {
+            "card_status": "active",
+        },
+    )
+
+    merchant = _CONTEXT_CACHE["merchants"].get(
+        merchant_id,
+        {
+            "risk_level": "low",
+        },
+    )
+
+    return {
+        "customer": customer,
+        "card": card,
+        "merchant": merchant
+    }
 
 # ---------------------------------------------------------------------------
 # Transaction processing
@@ -430,7 +591,7 @@ def process_transaction(
     # Recupero contesto
     # ---------------------------------------------------------------
 
-    context = fetch_content(
+    context = fetch_content_cached_or_db(
         api_url,
         customer_id,
         card_id,
@@ -582,3 +743,126 @@ def process_transaction(
         "is_night_transaction": is_night,
         "fraud_label": fraud_label,
     }
+
+
+def percentile(values: List[float], pct: float) -> float:
+    if not values:
+        return 0.0
+
+    sorted_values = sorted(values)
+
+    if len(sorted_values) == 1:
+        return sorted_values[0]
+
+    position = (len(sorted_values) - 1) * pct / 100.0
+    lower = int(position)
+    upper = min(lower + 1, len(sorted_values) - 1)
+    fraction = position - lower
+
+    return sorted_values[lower] + (
+        sorted_values[upper] - sorted_values[lower]
+    ) * fraction
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description="Client VoltDB Fraud Detection"
+    )
+    parser.add_argument(
+        "--voltdb-api-url",
+        default="http://localhost:8080/api/2.0",
+        help="Endpoint JSON API VoltDB",
+    )
+    parser.add_argument(
+        "--transactions-csv",
+        default="transactions.csv",
+        help="Percorso file CSV transazioni",
+    )
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=0,
+        help="Numero massimo transazioni (0 = tutte)",
+    )
+    parser.add_argument(
+        "--use-cache",
+        action="store_true",
+        help="Precarica customers/cards/merchants in memoria",
+    )
+
+    args = parser.parse_args()
+
+    if args.limit < 0:
+        parser.error("--limit deve essere >= 0")
+
+    if args.use_cache:
+        cache_info = initialize_cache(args.voltdb_api_url)
+        print(
+            "[INFO] Cache VoltDB inizializzata: "
+            f"customers={cache_info['customers']}, "
+            f"cards={cache_info['cards']}, "
+            f"merchants={cache_info['merchants']}"
+        )
+
+    latencies_ms: List[float] = []
+    processed_count = 0
+    error_count = 0
+
+    print(
+        f"Inizio elaborazione transazioni da "
+        f"'{args.transactions_csv}'..."
+    )
+    start_total = time.perf_counter()
+
+    with open(args.transactions_csv, mode="r", encoding="utf-8") as file:
+        reader = csv.DictReader(file)
+
+        for row in reader:
+            if args.limit > 0 and processed_count >= args.limit:
+                break
+
+            try:
+                start = time.perf_counter()
+                process_transaction(args.voltdb_api_url, row)
+                end = time.perf_counter()
+
+                latencies_ms.append((end - start) * 1000.0)
+                processed_count += 1
+
+            except Exception as exc:
+                error_count += 1
+                print(
+                    f"[ERRORE] transaction_id="
+                    f"{row.get('transaction_id', '?')}: {exc}",
+                    file=sys.stderr,
+                )
+
+    total_time = time.perf_counter() - start_total
+
+    if processed_count == 0:
+        print("Nessuna transazione elaborata.")
+        return 1 if error_count else 0
+
+    throughput = processed_count / total_time if total_time > 0 else 0.0
+
+    print("\n" + "=" * 50)
+    print(" RISULTATI BENCHMARK VOLTDB ENGINE")
+    print("=" * 50)
+    print(f"Transazioni elaborate : {processed_count}")
+    print(f"Errori                : {error_count}")
+    print(f"Tempo totale (s)      : {total_time:.2f} s")
+    print(f"Throughput            : {throughput:.2f} op/s")
+    print(
+        f"Latenza Media (ms)    : "
+        f"{sum(latencies_ms) / len(latencies_ms):.3f} ms"
+    )
+    print(f"Latenza P50 (ms)      : {percentile(latencies_ms, 50):.3f} ms")
+    print(f"Latenza P95 (ms)      : {percentile(latencies_ms, 95):.3f} ms")
+    print(f"Latenza P99 (ms)      : {percentile(latencies_ms, 99):.3f} ms")
+    print("=" * 50)
+
+    return 1 if error_count else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

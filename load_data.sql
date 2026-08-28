@@ -1,5 +1,8 @@
 -- =============================================================================
 -- Script di caricamento dati da file CSV per PostgreSQL (client-side \copy)
+-- Variante locale: usa i CSV dalla root del progetto.
+-- La variante Docker si trova in database/postgres/02-load_data.sql e usa
+-- i path montati sotto /data.
 -- =============================================================================
 -- Eseguire da terminale posizionandosi nella radice del progetto:
 -- psql -h localhost -U fraud -d frauddb -f load_data.sql

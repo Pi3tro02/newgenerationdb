@@ -1,5 +1,11 @@
--- Codice per caricare le tabelle anagrafiche in VoltDB.
--- Eseguire questi comandi dentro il container fraud-voltdb:
+-- Nota operativa per il caricamento manuale delle anagrafiche in VoltDB.
+--
+-- Questo file non viene eseguito automaticamente da sqlcmd: contiene i comandi
+-- csvloader equivalenti a quelli gia' usati dal servizio voltdb-init in
+-- docker-compose.yml.
+--
+-- Per un caricamento manuale, eseguire questi comandi dentro il container
+-- fraud-voltdb:
 --
 -- docker exec -it fraud-voltdb bash
 --

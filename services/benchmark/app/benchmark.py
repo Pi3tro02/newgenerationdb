@@ -17,7 +17,7 @@ for path in (WORKSPACE_ROOT, SERVICES_DIR, VOLTDB_APP_DIR):
         sys.path.insert(0, str(path))
 
 from stream import transaction_stream
-from metrics import evaluate_fraud_detection, format_metrics_report
+from metrics import evaluate_fraud_detection
 
 def now_iso():
     return datetime.now(timezone.utc).isoformat()
@@ -132,6 +132,11 @@ def main() -> int:
         "--voltdb-api-url",
         default="http://localhost:8080/api/2.0",
     )
+    parser.add_argument(
+        "--voltdb-use-cache",
+        action="store_true",
+        help="Precarica customers/cards/merchants nel client VoltDB",
+    )
     parser.add_argument("--results-dir", default="results")
 
     args = parser.parse_args()
@@ -156,6 +161,23 @@ def main() -> int:
         if "voltdb" in targets:
             clients["voltdb"] = load_client("voltdb-engine")
             connections["voltdb"] = args.voltdb_api_url
+
+        if "voltdb" in targets and args.voltdb_use_cache:
+            if not hasattr(clients["voltdb"], "initialize_cache"):
+                raise RuntimeError(
+                    "Il client VoltDB non supporta initialize_cache()"
+                )
+
+            cache_info = clients["voltdb"].initialize_cache(
+                args.voltdb_api_url
+            )
+
+            print(
+                "[INFO] Cache VoltDB inizializzata: "
+                f"customers={cache_info['customers']}, "
+                f"cards={cache_info['cards']}, "
+                f"merchants={cache_info['merchants']}"
+            )
 
     except Exception as exc:
         print(f"[ERRORE] Setup benchmark fallito: {exc}", file=sys.stderr)
@@ -226,6 +248,7 @@ def main() -> int:
         "transactions_csv": args.transactions_csv,
         "limit": args.limit,
         "tps": args.tps,
+        "voltdb_use_cache": args.voltdb_use_cache,
         "total_benchmark_time_s": total_benchmark_time,
         "mismatch_count": len(mismatches),
         "mismatches": mismatches,

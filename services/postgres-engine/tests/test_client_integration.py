@@ -6,7 +6,6 @@ Se il database non è disponibile, i test vengono automaticamente saltati con sk
 
 import os
 import sys
-from datetime import datetime
 import pytest
 
 # Aggiunge il percorso del modulo 'app' al sys.path

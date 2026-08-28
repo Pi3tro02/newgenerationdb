@@ -130,6 +130,7 @@ services:
       - http://voltdb:8080/api/2.0
       - --transactions-csv
       - /app/transactions.csv
+      - --use-cache
 
   benchmark:
     build:
@@ -155,6 +156,7 @@ services:
       - postgresql://fraud:fraud@postgres:5432/frauddb
       - --voltdb-api-url
       - http://voltdb:8080/api/2.0
+      - --voltdb-use-cache
       - --results-dir
       - /app/results
 

@@ -10,7 +10,7 @@ from datetime import datetime
 import os
 import sys
 import time
-from typing import Dict, List, Any
+from typing import List
 
 try:
     import psycopg2
@@ -290,4 +290,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

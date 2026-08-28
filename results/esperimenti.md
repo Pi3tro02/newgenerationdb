@@ -112,6 +112,32 @@ Anche in questo caso la parita funzionale e' completa: tutti i test TPS hanno mi
 
 Il risultato pratico e' che l'implementazione attuale sostiene circa 200-216 tx/s lato PostgreSQL e circa 47-50 tx/s lato VoltDB nel contesto di questo benchmark sequenziale. Il throughput complessivo percepito dal benchmark `both` e' limitato soprattutto dal target piu lento, cioe' VoltDB tramite JSON API.
 
+## Esperimento C - Ottimizzazione VoltDB con cache
+Dopo i primi benchmark, VoltDB risultava penalizzato, poiché, per ogni transazione, il client recuperava il contesto cont tre query separate:
+
+- `SELECT` su `customers`;
+- `SELECT` su `cards`;
+- `SELECT` su `merchants`.
+
+A queste si aggiungevano l'inserimento della transazione e l'eventuale inserimento dell'alert. Di conseguenza, ogni transazione poteva richiedere fino a cinque round-trip verso VoltDB.
+
+Per ridurre questo overhead, abbiamo deciso di introdurre una cache lato client, per le tabelle `customers`, `cards` e `merchants`. Esse sono statiche durante il benchmark, quindi possono essere caricate in memoria all'avvio del test. Durante l'elaborazione delle transazioni, il client recupera il contesto dalla cache invece di interrogare VoltDB ogni volta.
+
+Nei risultati di seguito mostrati, si evince l'ottimizzazione ottenuta:
+
+| File summary | Limit | Mismatch | Errori VoltDB | VoltDB avg base ms | VoltDB avg cached ms | Miglioramento avg | VoltDB P95 base ms | VoltDB P95 cached ms | Throughput base | Throughput cached |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| `benchmark_20260828_173006_summary.json` | 1,000 | 0 | 0 | 20.484 | 8.459 | -58.7% | 31.159 | 15.004 | 48.819 | 118.219 |
+| `benchmark_20260828_173359_summary.json` | 10,000 | 0 | 0 | 15.765 | 6.415 | -59.3% | 22.518 | 11.534 | 63.432 | 155.885 |
+
+La latenza di VoltDB è scesa drasticamente:
+- Sulla run da 1,000 transazioni la latenza media è passata da 20.484 ms a 8.459 ms;
+- Sulla run da 10,000 transazioni da 15.765 ms a 6.415 ms;
+
+Anche il throughput è migliorato nettamente: nella run da 10,000 transazioni VoltDb è passato da 63.432 tx/s a 155.885 tx/s. Da qui si deduce che il vero collo di bottiglia non era dato dal calcolo del risk-score, ma il numero di round-trip necessari per recuperare il conteggio dal database.
+
+La correttezza funzionale è rimasta invariata: entrambe le run ottimizzate hanno prodotto `mismatch_count = 0` ed errori pari a 0. Le metriche di rilevamento frodi sono identiche a quelle dei benchmark precedenti.
+
 ## Metriche frodi
 
 Nei run da 1,000 transazioni, le metriche di rilevamento sono identiche tra PostgreSQL e VoltDB:
@@ -147,7 +173,7 @@ Questa differenza e' coerente con un sistema antifrode reale: `BLOCKED` rapprese
 ## Osservazioni
 
 PostgreSQL risulta piu veloce nell'implementazione corrente, con latenza media circa 4-5 ms.
-VoltDB risulta piu lento in questa configurazione, con latenza media circa 16-21 ms, perche il client usa piu chiamate `@AdHoc` via JSON API per ogni transazione.
+Nella versione iniziale VoltDB risultava più lento a causa dell'overhead della JSON API e delle query @AdHoc. Dopo l'introduzione della cache lato client, VoltDB ha ridotto sensibilmente il divario rispetto a PostgreSQL, raggiungendo prestazioni molto vicine sul run da 10.000 transazioni.
 
 La parita funzionale e' confermata: tutti i run validi hanno `mismatch_count = 0`.
 
